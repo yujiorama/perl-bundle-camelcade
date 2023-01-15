@@ -1,0 +1,45 @@
+name: Build and publish a container image to ghcr.io
+
+"on":
+  push:
+    branches:
+      - 'main'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push-image:
+    strategy:
+      matrix:
+        perl-version:
+          - 5.32.1
+          - 5.34.1
+          - 5.36.0
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          build-args: |
+            PERL_VERSION=${{ matrix.perl-version }}
+          tags: ghcr.io/${{ github.repository }}:${{ matrix.perl-version }}

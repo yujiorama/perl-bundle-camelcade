@@ -1,6 +1,10 @@
 ARG PERL_VERSION=5.36.0
 FROM perl:$PERL_VERSION-slim
 
+LABEL org.opencontainers.image.source=https://github.com/yujiorama/perl-bundle-camelcade
+LABEL org.opencontainers.image.description="development image"
+LABEL org.opencontainers.image.licenses=MIT
+
 RUN set -x \
     && DEBIAN_FRONTEND=noninteractive apt-get update -qq -y \
     && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends \
